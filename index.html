@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<!-- 公共样式、初始化样式 -->
+		<link rel="stylesheet" type="text/css" href="css/reset.css"/>
+		<link rel="stylesheet" type="text/css" href="css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="css/index.css"/>
+	</head>
+	<body>
+		<div class="tableBox">
+			<h2 class="tableH2">表格操作模拟</h2>
+			<ul id="ul0">
+				<li>
+					<span class="idT tile">ID</span>
+					<span class="nameT tile">姓名</span>
+					<span class="ageT tile">年龄</span>
+					<span class="operateT tile">操作</span>
+				</li>
+			</ul>
+			<ul id="ul1">
+				<li id="li0">
+					<span class="idNum">0</span>
+					<span class="name">王乐慧</span>
+					<span class="age">23</span>
+					<span class="operate">
+						<span class="add">增加</span>
+						<span class="del">删除</span>
+						<span class="edit">编辑</span>
+					</span>
+				</li>
+				<li id="li1">
+					<span class="idNum">1</span>
+					<span class="name">王乐慧</span>
+					<span class="age">21</span>
+					<span class="operate">
+						<span class="add">增加</span>
+						<span class="del">删除</span>
+						<span class="edit">编辑</span>
+					</span>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var ul1 = document.getElementById("ul1");
+		var aAdd = document.getElementsByClassName("add");
+		var aDel = document.getElementsByClassName("del");
+		var aEdit = document.getElementsByClassName("edit");
+		
+		/* 生成模板所需数组 */ 
+		var arr = ["idNum", "name", "age", ["operate", "add", "del", "edit"]];
+		var arrOperate = ["增加", "删除", "编辑"];
+		
+		/* 初始化绑定监听时间 */
+		initializ();
+		function initializ(){
+			for (var i=0; i<aDel.length; i++) {
+				
+				aDel[i].onclick = function(){
+					if (confirm("确定删除?")) {
+						del(ul1, this.parentNode.parentNode);
+					}
+					return false;
+				}
+				
+				aAdd[i].onclick = function(){
+					add(ul1, this);
+				}
+			}
+			for (var i=0; i<aEdit.length; i++) {
+				aEdit[i].onclick = function(){
+					edit(this.parentNode.parentNode);
+				}
+			}
+			if (document.getElementsByClassName("save")[0]) {
+				document.getElementsByClassName("save")[0].onclick = function(){				
+					save(this.parentNode.parentNode);
+				}
+			}
+		}
+		
+		/*
+		 * 编辑
+		 * obj 当前编辑的节点
+		 * */
+		function edit(obj){
+			obj.style.backgroundColor = "white";
+			obj.getElementsByClassName("name")[0].setAttribute("contenteditable","true");
+			obj.getElementsByClassName("name")[0].focus();
+			obj.getElementsByClassName("age")[0].setAttribute("contenteditable","true");
+			obj.getElementsByClassName("edit")[0].innerHTML = "保存";
+			obj.getElementsByClassName("edit")[0].setAttribute("class","save");
+			initializ();
+		}
+		
+		/*
+		 * 保存修改
+		 * obj 当前改动的节点
+		 * */
+		function save(obj){
+			obj.style.backgroundColor = "";
+			obj.getElementsByClassName("name")[0].removeAttribute("contenteditable");
+			obj.getElementsByClassName("name")[0].blur();
+			obj.getElementsByClassName("age")[0].blur();
+			obj.getElementsByClassName("age")[0].removeAttribute("contenteditable");
+			obj.getElementsByClassName("save")[0].innerHTML = "编辑";
+			obj.getElementsByClassName("save")[0].setAttribute("class","edit");
+			initializ();
+			alert("已保存！");
+		}
+		
+		/*
+		 * 删除节点 
+		 * ul_obj 父级ul
+		 * li_obj 要删除的li节点
+		 * */
+		function del(ul_obj,li_obj){
+			if (li_obj.nextElementSibling) {
+				idCutOne(li_obj.nextElementSibling);
+			}
+			ul_obj.removeChild(li_obj);
+		}
+		
+		/*
+		 * 增加节点
+		 * ul_obj 增加在这个父级元素里
+		 * refer_obj 增加在这个节点之前
+		 * */
+		function add(ul_obj,refer_obj){	
+			/* 生成模板 */
+			var liM = model();  
+			/* 添加li标签id */
+			liM.setAttribute("id","li"+refer_obj.parentNode.parentNode.firstElementChild.innerHTML);
+			/*改变显示的id*/
+			liM.firstElementChild.innerHTML = refer_obj.parentNode.parentNode.firstElementChild.innerHTML;
+			/* 插入到列表 */
+			ul_obj.insertBefore(liM,refer_obj.parentNode.parentNode);
+			/* 保持编辑状态 */
+			edit(document.getElementById("li"+refer_obj.parentNode.parentNode.firstElementChild.innerHTML));
+			/* 后面的节点id+1 */
+			idAddOne(refer_obj.parentNode.parentNode);
+			/* 初始化绑定点击事件 */
+			initializ();		
+		}
+		
+		/*
+		 * 生成模板函数
+		 * */
+		function model(){
+			var liM = document.createElement("li");		
+			for (var i=0; i<arr.length; i++) {
+				if (!arr[i][0][1]) {					
+					var spanM = document.createElement("span");
+					spanM.setAttribute("class",arr[i]);
+				 	liM.appendChild(spanM); 
+				}else{
+					var spanOprate = document.createElement("span");
+					spanOprate.setAttribute("class",arr[i][0]);
+					console.log(spanOprate);
+					for(var j=1; j<arr[i].length; j++){
+						var spanOprateM = document.createElement("span");
+						var spanText = document.createTextNode(arrOperate[j-1]);
+						spanOprateM.setAttribute("class",arr[i][j]);
+						spanOprateM.appendChild(spanText);
+						spanOprate.appendChild(spanOprateM); 
+					}
+				 	liM.appendChild(spanOprate); 				 
+				}				
+			}
+			return liM;
+		}
+		
+		/*
+		 * obj节点以后的id全部+1(显示隐式都+1)
+		 * */
+		function idAddOne(obj){
+			obj.firstElementChild.innerHTML++;
+			obj.setAttribute("id","li"+obj.firstElementChild.innerHTML);
+			if (obj.nextElementSibling) {
+				idAddOne(obj.nextElementSibling);
+			}
+		}
+		
+		/*
+		 * obj节点以后的id全部-1(显示隐式都-1)
+		 * */
+		function idCutOne(obj){
+			console.log(obj);
+			obj.firstElementChild.innerHTML = obj.firstElementChild.innerHTML-1;
+			obj.setAttribute("id","li"+obj.firstElementChild.innerHTML);
+			if (obj.nextElementSibling) {
+				idCutOne(obj.nextElementSibling);
+			}
+		}
+		
+		/*
+		 * 根据ID排序
+		 * */			
+		function idSort(){
+			var arr = [];
+			var aIdNum = document.getElementsByClassName("idNum");
+			console.log(aIdNum);
+		}
+	</script>
+</html>

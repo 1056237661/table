@@ -1,0 +1,59 @@
+.tableH2{
+    padding: 21px;
+    font-size: 16px;
+    text-align: center;
+}
+.tableBox{
+    width: 500px;
+    min-height: 300px;
+    padding-bottom: 20px;
+    margin: 10% auto;
+    border: 1px solid royalblue;
+}
+ul li{
+    font-size: 0;
+}
+span{
+    height: 30px;
+    line-height: 30px;
+    vertical-align: top;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+}
+
+// title 
+.tile{
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+//
+.idT,.idNum{
+    width: 48px;
+    border: 1px solid royalblue;
+}
+
+.nameT,.name,.ageT,.age{
+    width: 98px;
+    border: 1px solid royalblue;
+}
+.name,.age{
+    white-space: nowrap;
+    overflow: hidden;
+}
+.operate,.operateT{
+    width: 248px;
+    border: 1px solid royalblue;    
+}
+
+//operate
+.add,.del,.edit,.save{
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+// liModel
+#ulModel li{
+    visibility: hidden;
+}
